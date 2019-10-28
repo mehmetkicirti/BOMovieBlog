@@ -17,11 +17,24 @@ let ErrorEnums={
 const Movie = require('../models/Movie');
 
 router.get('/', (req, res) => {
-    Movie.find({}, (err, data) => {
-        if (err)
-            res.json(err);
-        res.json(data);
-    });
+    // Movie.find({}, (err, data) => {
+    //     if (err)
+    //         res.json(err);
+    //     res.json(data);
+    // });
+    const promise = Movie.aggregate([
+        {
+            $lookup:{
+                from:'directors',
+                localField:'director_id',
+                foreignField:'_id',
+                as:'director'
+            }
+        },
+        {
+            $unwind:'$director'
+        }
+    ]);
 });
 //Top 10
 router.get('/top10',(req,res)=>{
