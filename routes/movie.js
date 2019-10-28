@@ -30,11 +30,28 @@ router.get('/', (req, res) => {
                 foreignField:'_id',
                 as:'director'
             }
+            
+        },
+        {
+            $lookup:{
+                from:'categories',
+                localField:'category_id',
+                foreignField:'_id',
+                as:'category'
+            }
         },
         {
             $unwind:'$director'
+        },
+        {
+            $unwind:'$category'
         }
     ]);
+    promise.then((data)=>{
+        res.json(data);
+    }).catch((err)=>{
+        res.json(err);
+    })
 });
 //Top 10
 router.get('/top10',(req,res)=>{
