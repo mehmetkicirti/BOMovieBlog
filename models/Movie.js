@@ -6,12 +6,15 @@ const MovieSchema = new Schema({
         type:String,
         required:true
     },
+    comments:[
+        {messages:String}
+    ],
     category_id:Schema.Types.ObjectId,
     country:String,
     year:Number,
     imdb_score:Number,
     director_id:Schema.Types.ObjectId,
-    date:{
+    createdAt:{
         type:Date,
         default:Date.now
     }
