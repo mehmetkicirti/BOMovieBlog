@@ -1,6 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
+// Error Messages
+let ErrorEnums={
+    Not_Found:1,
+    Not_Found_To_Deleted:2,
+    Not_Found_To_Updated:3,
+    properties:{
+        1:{name:"Not Found",value:"The movie was not found.",code:404},
+        2:{name:"Not Found Deleted",value:"The movie was not found to deleted.",code:405},
+        3:{name:"Not Found Updated",value:"The movie was not found to updated",code:406}
+    }
+};
+
 //Model import 
 const Movie = require('../models/Movie');
 
@@ -38,12 +50,25 @@ router.get('/between/:start_year/:end_year',(req,res)=>{
         res.json(err);
     });
 });
+//search by name
+router.get('/searchByTitle/:title',(req,res,next)=>{
+    const promise = Movie.findOne({title:req.params.title});
+
+    promise.then((movie)=>{
+        if(!movie)
+            next({message:ErrorEnums.properties[0].value,code:ErrorEnums.properties[0].code});
+        res.json(movie);
+    }).catch((err)=>{
+        res.json(err);
+    });
+});
+
 
 router.get('/:movie_id', (req, res,next) => {
     //what will be movie_id that to be appointed.
     Movie.findById(req.params.movie_id,(err,data)=>{
         if(!data)
-            next({message:"The movie was not found.",code:404});
+            next({message:ErrorEnums.properties[0].value,code:ErrorEnums.properties[0].code});
         if(err)
             res.json(err);
         res.json(data);
@@ -56,7 +81,7 @@ router.put('/:movie_id',(req,res,next)=>{
     });
     promise.then((movie)=>{
         if(!movie){
-            next({message:"The movie was not found to update",code:405});
+            next({message:ErrorEnums.properties[1].value,code:ErrorEnums.properties[1].code});
         }
         res.json(movie);
     }).catch((err)=>{
@@ -68,7 +93,7 @@ router.delete('/:movie_id',(req,res,next)=>{
     const promise = Movie.findByIdAndRemove(req.params.movie_id);
     promise.then((movie)=>{
         if(!movie)
-           next({message:'The movie was not found to delete',code:406}); 
+           next({message:ErrorEnums.properties[2].value,code:ErrorEnums.properties[2].code}); 
 
         res.json(movie);
     }).catch((err)=>{
@@ -100,5 +125,7 @@ router.post('/', (req, res, next) => {
         res.json(err);
     });
 });
+
+
 
 module.exports = router;
