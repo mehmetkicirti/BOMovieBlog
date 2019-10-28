@@ -71,8 +71,8 @@ router.get('/:director_id', (req, res) => {
     {
       $lookup: {
         from: 'movies', //which with table
-        localField: '_id',
-        foreignField: 'director_id',
+        localField: 'director_id',
+        foreignField: '_id',
         as: 'movies' //what as assigned name
       }
     },
@@ -144,5 +144,59 @@ router.delete('/:director_id', (req, res, next) => {
     res.json(err);
   });
 });
+//searchbyName
+router.get('/searchByName/:name', (req, res, next) => {
+  const promise = Movie.aggregate([{
+      $match: {
+        name: req.params.name
+      }
+    },
+    {
+      $lookup: {
+        from: "movies",
+        localField: 'director_id',
+        foreignField: '_id',
+        as: "movie"
+      }
+    },
+    {
+      $unwind: {
+        path: '$movie',
+        preserveNullAndEmptyArrays: true //Whatever matched any data is getting this command.
+      }
+    },
+    {
+      $group: {
+        _id: {
+          _id: '$_id',
+          name: '$name',
+          surname: '$surname',
+          bio: '$bio'
+        },
+        movies: {
+          $push: '$movies'
+        } // this command was provide that getting into movies all movie belonging the director.
+      }
+    },
+    {
+      $project: {
+        _id: '$_id._id',
+        name: '$_id.name',
+        surname: '$_id.surname',
+        movies: '$_id.movies'
+      } //this command was provided that merging what we wanted properties defining in here. 
+    }
+  ]);
 
+  promise.then((director) => {
+    if (!director)
+      next({
+        message: 'The director was not found',
+        code: 404
+      });
+    res.json(director);
+  }).catch((err) => {
+    res.json(err);
+  });
+});
 module.exports = router;
