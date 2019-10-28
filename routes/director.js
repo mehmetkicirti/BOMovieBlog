@@ -1,4 +1,4 @@
-const mongoose = require('mongoose'); 
+const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 
@@ -63,8 +63,7 @@ router.get('/', (req, res) => {
 });
 //Get By Id
 router.get('/:director_id', (req, res) => {
-  const promise = Director.aggregate([
-    {
+  const promise = Director.aggregate([{
       $match: {
         _id: mongoose.Types.ObjectId(req.params.director_id)
       }
@@ -112,22 +111,38 @@ router.get('/:director_id', (req, res) => {
   });
 });
 //update Data
-router.put('/:director_id',(req,res,next)=>{
+router.put('/:director_id', (req, res, next) => {
   const promise = Director.findByIdAndUpdate(
     req.params.director_id,
-    req.body,
-    {
-      new:true
+    req.body, {
+      new: true
     }
   );
-  promise.then((director)=>{
-      if(!director)
-        next({message:'The director was not found',code:404});
-      res.json(director);
-  }).catch((err)=>{
+  promise.then((director) => {
+    if (!director)
+      next({
+        message: 'The director was not found',
+        code: 404
+      });
+    res.json(director);
+  }).catch((err) => {
     res.json(err);
   });
 });
+//delete Data
+router.delete('/:director_id', (req, res, next) => {
+  const promise = Director.findByIdAndRemove(req.params.director_id);
 
+  promise.then((director) => {
+    if (!director)
+      next({
+        message: 'The director was not found',
+        code: 404
+      });
+    res.json(director);
+  }).catch((err) => {
+    res.json(err);
+  });
+});
 
 module.exports = router;
