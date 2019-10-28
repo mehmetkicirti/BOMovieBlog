@@ -5,10 +5,14 @@ const DirectorSchema= new Schema({
     name:{
         type:String,
         required:1,
+        maxlength:75,
+        minlength:2
     },
     surname:{
         type:String,
-        required:1
+        required:1,
+        maxlength:30,
+        minlength:2
     },
     bio:{
         type:String
