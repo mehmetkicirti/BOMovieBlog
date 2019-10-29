@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+
 const directorRouter = require('./routes/director');
 const usersRouter = require('./routes/users');
 const movieRouter=require('./routes/movie');
@@ -25,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //using routes as 
 app.use('/api/director', directorRouter);
-app.use('/users', usersRouter);
+app.use('/api/user', usersRouter);
 app.use('/api/movie',movieRouter);
 app.use('/api/category',categoryRouter);
 // catch 404 and forward to error handler
