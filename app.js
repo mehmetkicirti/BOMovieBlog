@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
+const multer = require('multer');
 
 const directorRouter = require('./routes/director');
 const usersRouter = require('./routes/users');
@@ -17,6 +17,16 @@ const db= require(path.join(__dirname,"/helper","/db.js"))();
 //middleware
 const verifyToken = require('./middleware/verify-token');
 
+//multer configurate where should be uploads
+const storage = multer.diskStorage({
+    destination:(req,file,callback)=>{
+      callback(null,'./public/images/');
+    },
+    filename:(req,file,callback)=>{
+      callback(null,file.fieldname+"-"+Date.now()+path.extname(file.originalname));
+      //imgURL-342342.jpg
+    }
+});
 //config key.
 const config = require(path.join(__dirname,"config.js"));
 app.set('api_secret_key',config.api_secret_key);
@@ -29,7 +39,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(multer({storage:storage}).single('imgURL'));
 //using routes as 
 app.use('/api/director', directorRouter);
 app.use('/user', usersRouter);
