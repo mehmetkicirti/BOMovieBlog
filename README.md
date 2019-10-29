@@ -39,7 +39,7 @@ This Project purpose that it containing ; Movies getting from the api and also c
 |Route |Http|Post Data| Description|
 |------|----|---------|------------|
 |/user|POST|{'name:"Userrealname",surname:"..",..}|To add user that you can use easily the process|
-|/user|POST|{'username:"loginName",password:"..",..}|When we want to add token and also reach another methods.|
+|/user/authenticate|POST|{'username:"loginName",password:"..",..}|When we want to add token and also reach another methods.|
 |/user|GET|Null|Getting user list.|
 |/user/:user_id|GET|Null|Getting only one user.|
 
