@@ -71,8 +71,8 @@ router.get('/:director_id', (req, res) => {
     {
       $lookup: {
         from: 'movies', //which with table
-        localField: 'director_id',
-        foreignField: '_id',
+        localField: '_id',
+        foreignField: 'director_id',
         as: 'movies' //what as assigned name
       }
     },
@@ -154,8 +154,8 @@ router.get('/searchByName/:name', (req, res, next) => {
     {
       $lookup: {
         from: "movies",
-        localField: 'director_id',
-        foreignField: '_id',
+        localField: '_id',
+        foreignField: 'director_id',
         as: "movie"
       }
     },
