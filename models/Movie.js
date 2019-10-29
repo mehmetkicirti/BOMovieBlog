@@ -21,8 +21,8 @@ const MovieSchema = new Schema({
     },
     imdb_score:{
         type:Number,
-        min:ParseFloat(0),
-        max:ParseFloat(10)
+        min:parseFloat(0),
+        max:parseFloat(10)
     },
     director_id:Schema.Types.ObjectId,
     createdAt:{
