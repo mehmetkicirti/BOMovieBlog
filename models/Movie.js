@@ -9,10 +9,7 @@ const MovieSchema = new Schema({
         minlength:1,
         unique:true
     },
-    comments:[
-        {messages:String}
-    ],
-    category_id:Schema.Types.ObjectId,
+    category_id:mongoose.Types.ObjectId,
     country:String,
     year:{
         type:Number,
@@ -24,11 +21,20 @@ const MovieSchema = new Schema({
         min:parseFloat(0),
         max:parseFloat(10)
     },
-    director_id:Schema.Types.ObjectId,
+    director_id:mongoose.Types.ObjectId,
     createdAt:{
         type:Date,
         default:Date.now
-    }
+    },
+    imgURL:{
+        type:String
+    },
+    comments:[
+        {
+        user_id:{type:mongoose.Types.ObjectId},
+        message:{type:String}
+        }
+    ]
 });
 
 module.exports=mongoose.model('movie',MovieSchema);
