@@ -6,7 +6,11 @@ const mongoose =require('mongoose');
 //Model User 
 const User = require('../models/User');
 
-
+router.use((req,res,next)=>{
+  res.header("Access-Control-Allow-Origin","*"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 /* Post users. */
 router.post('/', function (req, res, next) {
   const {
@@ -83,15 +87,15 @@ router.get('/',(req,res)=>{
 
         }
       },
-      {
-        $project:{
-            username:1,
-            name:1,
-            surname:1,
-            email:1,
-            createdAt:1
-        }
-      },
+      // {
+      //   $project:{
+      //       username:1,
+      //       name:1,
+      //       surname:1,
+      //       email:1,
+      //       createdAt:1
+      //   }
+      // },
       {
         $lookup:{
           from:"movies",
@@ -105,32 +109,32 @@ router.get('/',(req,res)=>{
           path: '$movies',
           preserveNullAndEmptyArrays: true
         }
+      },
+      {
+        $group: {
+          _id: {
+            _id:"$_id",
+            username:"$username",
+            name:"$name",
+            surname:"$surname",
+            email:"$email",
+            createdAt:"$createdAt"
+          },
+          movies: {
+            $push: '$movies'
+          } // this command was provide that getting into movies all movie belonging the director.
+        }
+      },
+      {
+        $project: {
+          // _id: '$_id._id',
+          title: '$_id.title',
+          imdb_score: '$_id.imdb_score',
+          country:"$_id.country",
+          year:"$_id.year",
+          movies: '$movies'
+        } //this command was provided that merging what we }wanted properties defining in here. 
       }
-      // {
-      //   $group: {
-      //     _id: {
-      //       _id:"$_id",
-      //       username:"$username",
-      //       name:"$name",
-      //       surname:"$surname",
-      //       email:"$email",
-      //       createdAt:"$createdAt"
-      //     },
-      //     movies: {
-      //       $push: '$movies'
-      //     } // this command was provide that getting into movies all movie belonging the director.
-      //   }
-      // },
-      // {
-      //   $project: {
-      //     _id: '$_id._id',
-      //     title: '$_id.title',
-      //     imdb_score: '$_id.imdb_score',
-      //     country:"$_id.country",
-      //     year:"$_id.year",
-      //     movies: '$_id.movies'
-      //   } //this command was provided that merging what we }wanted properties defining in here. 
-      // }
     ],(err,data)=>{
       if(err)
         res.json(err);

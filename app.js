@@ -4,7 +4,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const multer = require('multer');
-
 const directorRouter = require('./routes/director');
 const usersRouter = require('./routes/users');
 const movieRouter=require('./routes/movie');
