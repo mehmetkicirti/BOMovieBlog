@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 module.exports=()=>{
-    mongoose.connect('mongodb+srv://mehmet:1234@cluster0-l7tmj.mongodb.net/movieApi?retryWrites=true&w=majority',{useNewUrlParser:true,useUnifiedTopology:true});
+    mongoose.connect(process.env.DB_CONNECT,{useNewUrlParser:true,useUnifiedTopology:true});
     mongoose.connection.on('open',()=>{
         console.log("Mongo DB : Connected.");
     });

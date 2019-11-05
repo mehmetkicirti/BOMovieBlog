@@ -29,9 +29,9 @@ const storage = multer.diskStorage({
 //config key.
 const config = require(path.join(__dirname,"config.js"));
 app.set('api_secret_key',config.api_secret_key);
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// // view engine setup
+// app.set('views', path.join(__dirname, 'views'));
+// app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -39,12 +39,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(multer({storage:storage}).single('imgURL'));
-//using routes as 
+ 
+app.use('/api',verifyToken);//below the api parameter all method if authenticated,it can be able to access from user.
+//using routes as
 app.use('/api/director', directorRouter);
 app.use('/user', usersRouter);
 app.use('/api/movie',movieRouter);
 app.use('/api/category',categoryRouter);
-app.use('/api',verifyToken);//below the api parameter all method if authenticated,it can be able to access from user.
+
 
 // catch 404 and forward to error handler
 app.use((req, res, next) =>{
