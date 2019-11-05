@@ -6,6 +6,12 @@ const router = express.Router();
 //Models Director
 const Director = require('../models/Director');
 
+router.use((req,res,next)=>{
+  res.header("Access-Control-Allow-Origin","*"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 /* Post. */
 router.post('/', (req, res, next) => {
   const director = new Director(req.body);
