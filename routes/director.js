@@ -13,7 +13,7 @@ router.use((req,res,next)=>{
 });
 
 /* Post. */
-router.post('/', (req, res, next) => {
+router.post('/save', (req, res, next) => {
   const director = new Director(req.body);
   const promise = director.save();
 

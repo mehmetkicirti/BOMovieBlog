@@ -40,7 +40,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(multer({storage:storage}).single('imgURL'));
  
-app.use('/api',verifyToken);//below the api parameter all method if authenticated,it can be able to access from user.
+app.use('/api/movie/:movie_id',verifyToken);//below the api parameter all method if authenticated,it can be able to access from user.
+app.use('/api/movie/save',verifyToken);
+app.use('/api/director/save',verifyToken);
+app.use('/api/director/:movie_id',verifyToken);
 //using routes as
 app.use('/api/director', directorRouter);
 app.use('/user', usersRouter);
