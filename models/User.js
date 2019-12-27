@@ -37,8 +37,8 @@ const UserSchema = new Schema({
     password:{
         type:String,
         required:1,
-        minlength:5,
-        maxlength:75
+        minlength:8,
+        maxlength:100
     },
     createdAt:{
         type:Date,

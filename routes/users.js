@@ -3,8 +3,20 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt =require('jsonwebtoken');
 const mongoose =require('mongoose');
+const mailer = require('nodemailer');
 //Model User 
 const User = require('../models/User');
+
+// //Validation
+// const Joi = require('@hapi/joi');
+
+// const schema = {
+//     name:Joi.string().min(3).required(),
+//     surname:Joi.string().min(3).required(),
+//     username:Joi.string().min(3).required(),
+//     email:Joi.string().min(6).required().email(),
+//     password:Joi.string().min(8).required()
+// }
 
 router.use((req,res,next)=>{
   res.header("Access-Control-Allow-Origin","*"); // update to match the domain you will make the request from
@@ -12,29 +24,59 @@ router.use((req,res,next)=>{
   next();
 });
 /* Post users. */
-router.post('/', function (req, res, next) {
+router.post('/',async (req, res, next) => {
+  //Validate data
+  // const validation = Joi.valid(req.body,schema);
+  // res.send(validation);
   const {
     name,
     surname,
     username,
     email,
-    password,
-    comments
+    password
   } = req.body;
 
-  bcrypt.hash(password, 10).then((hash) => {
-    const user = new User({
-      name: name,
-      surname: surname,
-      username: username,
-      email: email,
-      password: hash,
-      comments:comments
+  let transporter =mailer.createTransport({
+    service:'gmail',
+    auth:{
+      user:'infose480project@gmail.com',
+      pass:'45594559'
+    }
+  });
+  
+  
+    
+    //Check database if it is a already user control
+
+    const emailExist =await User.findOne({email:email});
+    if(emailExist) return res.status(400).send("Email is already exists.");
+    await bcrypt.hash(password, 10).then((hash) => {
+      const user = new User({
+        name: name,
+        surname: surname,
+        username: username,
+        email: email,
+        password: hash
     });
 
-    const promise = user.save();
+    let mailOptions = {
+      from : 'infose480project@gmail.com',
+      to:email,
+      subject:'New register',
+      text:'Welcome to our app',
+      html: `<h1>Welcome ${name} ${surname}</h1></br></hr> Successfully registered.. <hr>Your password is : ${password}`
+    };
 
+    const promise =user.save();
+    
     promise.then((data) => {
+      transporter.sendMail(mailOptions,(error,info)=>{
+        if(error){
+          console.log(error);
+        }else{
+          console.log('Email sent :',info.response);
+        }
+      });
       res.json(data);
     }).catch((err) => {
       res.json(err);
@@ -42,10 +84,10 @@ router.post('/', function (req, res, next) {
   });
 });
 
-router.post('/authenticate',(req,res)=>{
+router.post('/authenticate',async (req,res)=>{
   const {username,password} = req.body;
 
-  User.findOne({
+  await User.findOne({
     username
   },(err,user)=>{
     if(err)
@@ -54,7 +96,7 @@ router.post('/authenticate',(req,res)=>{
       res.json({
         status:false,
         message:"Authentication Failed, user not found."
-      });
+    });
     }else{
       bcrypt.compare(password,user.password).then((result)=>{
         if(!result){
@@ -79,8 +121,8 @@ router.post('/authenticate',(req,res)=>{
   });
 });
 
-router.get('/',(req,res)=>{
-    User.aggregate([
+router.get('/', async (req,res)=>{
+    await User.aggregate([
       {
         $match:{
           IsAdmin:false,
@@ -142,8 +184,8 @@ router.get('/',(req,res)=>{
     });
 });
 
-router.get('/:user_id',(req,res)=>{
-  User.aggregate([
+router.get('/:user_id',async (req,res)=>{
+  await User.aggregate([
     {
       $match:{
         _id:mongoose.Types.ObjectId(req.params.user_id)
