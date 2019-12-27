@@ -29,6 +29,9 @@ const MovieSchema = new Schema({
     imgURL:{
         type:String
     },
+    embedURL:{
+        type:String
+    },
     comments:[
         {
         user_id:{type:mongoose.Types.ObjectId},

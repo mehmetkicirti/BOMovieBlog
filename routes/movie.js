@@ -88,7 +88,9 @@ router.get('/', (req, res) => {
                 country:1,
                 imgURL:1,
                 year:1,
-                createdAt:1
+                createdAt:1,
+                imgURL:1,
+                embedURL:1
             }
         }
     ]);
@@ -164,14 +166,16 @@ router.put('/:movie_id', (req, res, next) => {
     const {title,
         imdb_score,
         country,
-        year} =req.body;
+        year,
+        embedURL} =req.body;
     const {imgURL}=req.file;
 
     const movie = new Movie({
         title:title,
         imdb_score:imdb_score,
         country:country,
-        year:year
+        year:year,
+        embedURL:embedURL
     });
     if(imgURL){
         fs.unlink('public/images/'+movie.imgURL, err=>{
@@ -230,7 +234,8 @@ router.post('/', (req, res, next) => {
         year,
         comments,
         category_id,
-        director_id
+        director_id,
+        embedURL
     } = req.body; //all objects contain to post
     const {imgURL}=req.file;
 
@@ -242,7 +247,8 @@ router.post('/', (req, res, next) => {
         comments: comments,
         category_id,
         director_id,
-        imgURL:imgURL.filename
+        imgURL:imgURL.filename,
+        embedURL:embedURL
     });
     // movie.save((err,data)=>{
     //     if(err)
